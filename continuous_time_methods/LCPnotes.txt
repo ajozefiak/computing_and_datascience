@@ -1,0 +1,114 @@
+Solving Optimal Stopping problems using LCP:
+
+The simplest form of a continuous time optimal stopping problem is of the form:
+
+$$v(x) = \max_{\tau}\mathbb{E}_0\int_{0}^{\tau}e^{-\rho t} u(x_t)dt + e^{-\rho \tau}S(x_{\tau}), dx_t - ]mu(x_t)dt+\sigma(x_t)dt$$
+
+One interpretation is that $v$ is the value of a plant, $u$ are profits which evolve exogenously, One can close the value of the plant and sell it at a scrap value $S(x)$. The problem is to choose an optimal shut-down time (stopping time) $\tau$. To make sure the plant shuts down eventually assume $\mu(x) < 0$ for all $x$. 
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Introduction:
+
+An optimal stopping problem is a problem that requires an agent to choose to optimal stopping time such that value is maximized (or cost is minimized).
+
+An example of a simple optimal stopping problem is choosing the optimal shut-down time of a plant. Given a state variable $x_t$, maintaining the plant the agent has profits $u(x_t)$ discounted by $e^{-\rho}$. While shutting down the plant at time $\tau$ the agent no longer derives any profits from the plant, however, options a one time profit of $S(x_{\tau})$ discounted by $e^{-\rho \tau}$. We can think of this value $S(x_{\tau})$ as the profit from liquidating the assets of the plant. 
+
+To make this problem simple, we can assume that $x_t$ is exogenous, that is, the agent has no control over $\{x_{t}\}_0^\{\tau}$. 
+
+We could for instance consider the case $x_t$ follows a Brownian diffusion:
+
+$$x_t = \mu(x_t)dt + \sigma(x_t)dW_t$$
+
+To ensure that the plant will eventually shut down, we can consider the case where $\mu(x) < 0$ for all $x$. 
+
+
+Thus, we can formulate the optimal stopping problem as:
+
+$$v(x) = \max_{\tau}\mathbb{E}_0\int_{0}^{\tau}e^{-\rho t} u(x_t)dt + e^{-\rho \tau}S(x_{\tau}), dx_t - ]mu(x_t)dt+\sigma(x_t)dt$$
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For values of $x$ such that the plant does not exit, the following HJB equation holds
+
+$$\rho v(x0 = u(x) + \mu(x)v'(x) + \frac{\sigma^2(x)}{2}v''(x)$$
+
+Define $X$ to be the set of $x$ for which there is no exit. Then
+
+- $x\in X: v(x)\geq S(x)$ (i.e the value of not exiting $v(x)$ is at least as great than that of the value of exitting $S(x)$)
+
+- $x\notin X$: v(x) = S(x)$ (i.e. the value maximum possible value $v(x)$ is the value of choosing to exit $S(x)$ 
+
+Which then leads to
+
+- $x\in X: v(x)\geq S(x), \rho v(x) = u(x)+\mu(x)v'(x) +\frac{\sigma^2(x)}{2}v''(x)$
+
+- $x\notin X$: v(x) = S(x), \rho v(x) \geq u(x)+\mu(x)v'(x) +\frac{\sigma^2(x)}{2}v''(x)$
+
+
+This can be written compactly as a HJB variational equality
+
+$$\min\{\rho v(x) - u(x)-mu(x)v'(x) -\frac{\sigma^2(x)}{2}v''(x), v(x) - S(x)\}$$
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Solving the HKBVI as a Linear Complementarity Problem (LCP) 
+
+
+Without the exit option the HJB can be discretized as
+
+$$\rho v_i^n = u_i + \mu_i(v_i^n)' + \frac{\sigma^2_i}{2}(v_i^n)''$$
+
+Denoting the differential operator on $v$ by $A$, we can equivalently write the above as
+
+$$ \rho v = u + Av$$
+
+We can thus rewrite the earlier HJBVI in discretized form:
+
+$$\min\{\rho v - u - Av, v- S\} = 0$$
+
+Equivalently
+
+- $(v-S)^T(\rho v - u - Av) = 0$
+
+- $v\geq S$
+
+- $\rho v - u - Av\geq 0 $
+
+Noting the form of an LCP in the appendix, we can rewrite the above problem as follows:
+
+- Denote the "excess value" z =  v - S and $B = \rhoI - A$. Then the second equation is
+
+$$z\geq 0$$
+
+ and the third equation is 
+
+$$Bz+q\geq 0$$
+
+where $q = -u + BS$. 
+
+Then problem can be written as:
+
+- $z^T(Bz + q) = 0$
+
+- $z \geq 0$ 
+
+- $Bz+q \geq  0$  
+
+This is the standard form for LCPs (as denoted in the appendix). We can thus proceed to solve this problem, obtaining a solution $z$, using an LCP solver. From there, we can obtain a solution to our original problem $v = z + S$. 
+
+Reference: Ben Moll's notes "Exercising an Option: Numerical Solution"
+
+
+
+
+
+
+
+
+
+
+
+
